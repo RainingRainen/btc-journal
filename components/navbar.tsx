@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 
-type View = "home" | "portfolio"
+type View = "home" | "Indicators"
 
 const links: { label: string; view: View }[] = [
   { label: "Home", view: "home" },
