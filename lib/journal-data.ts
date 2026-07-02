@@ -54,7 +54,10 @@ export const weeklyUpdates: WeeklyUpdate[] = [
     chart: "/charts/chart-2.png",
     brief: "A tight consolidation week.",
     content: [
-      { type: "text", value: "A tight consolidation week. Volatility compressed into a coil — historically a precursor to an expansion move. Staying patient and letting price show its hand." }
+      { 
+        type: "text", 
+        value: "A tight consolidation week. Volatility compressed into a coil — historically a precursor to an expansion move. Staying patient and letting price show its hand." 
+      }
     ]
   },
   {
@@ -63,7 +66,10 @@ export const weeklyUpdates: WeeklyUpdate[] = [
     chart: "/charts/chart-3.png",
     brief: "Sharp wick down cleared out over-leveraged positions.",
     content: [
-      { type: "text", value: "Sharp wick down cleared out over-leveraged positions before a strong recovery. Funding reset to neutral, which I read as constructive for the weeks ahead." }
+      { 
+        type: "text", 
+        value: "Sharp wick down cleared out over-leveraged positions before a strong recovery. Funding reset to neutral, which I read as constructive for the weeks ahead." 
+      }
     ]
   }
 ]
