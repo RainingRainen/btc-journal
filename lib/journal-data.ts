@@ -1,8 +1,14 @@
+export type ContentBlock = {
+  type: "text" | "image"
+  value: string
+}
+
 export type WeeklyUpdate = {
   week: number
   title: string
-  description: string
   chart: string
+  brief: string
+  content: ContentBlock[]
 }
 
 export const weeklyUpdates: WeeklyUpdate[] = [
