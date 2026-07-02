@@ -13,7 +13,7 @@ export type WeeklyUpdate = {
 
 export const weeklyUpdates: WeeklyUpdate[] = [
   {
-    week: 26,
+    week: 01,
     title: "熊市尚未結束",
     chart: "https://i.postimg.cc/4xy0F7ww/jie-tu-2026-06-27-xia-wu4-44-05.png",
     brief: "從宏觀資金流向來看，近期現貨 ETF 呈現持續且瘋狂的淨流出狀態。然而在經歷連續下跌後，短線的博弈邏輯正在發生微妙的變化...",
