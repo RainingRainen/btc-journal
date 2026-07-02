@@ -13,10 +13,9 @@ export type WeeklyUpdate = {
 
 export const weeklyUpdates: WeeklyUpdate[] = [
   {
-   {
     week: 26,
     title: "熊市尚未結束",
-    chart: "https://i.postimg.cc/4xy0F7ww/jie-tu-2026-06-27-xia-wu4-44-05.png", // 第一張圖直接當作卡片大封面
+    chart: "https://i.postimg.cc/4xy0F7ww/jie-tu-2026-06-27-xia-wu4-44-05.png",
     brief: "從宏觀資金流向來看，近期現貨 ETF 呈現持續且瘋狂的淨流出狀態。然而在經歷連續下跌後，短線的博弈邏輯正在發生微妙的變化...",
     content: [
       { 
@@ -48,22 +47,23 @@ export const weeklyUpdates: WeeklyUpdate[] = [
         value: "儘管我強調長線熊市尚未完全終結，但各項週期性指標顯示，我已經無限接近這輪調整的尾聲。從經典的比特幣彩虹對數圖來看，目前的價格區間已經正式進入了歷史性的「底部」，甚至在局部時間點出現了稍微跌破藍色底部支撐線的極端現象。" 
       }
     ]
-  }
   },
   {
     week: 25,
     title: "Chop Before the Break",
-    description:
-      "A tight consolidation week. Volatility compressed into a coil — historically a precursor to an expansion move. Staying patient and letting price show its hand.",
     chart: "/charts/chart-2.png",
+    brief: "A tight consolidation week.",
+    content: [
+      { type: "text", value: "A tight consolidation week. Volatility compressed into a coil — historically a precursor to an expansion move. Staying patient and letting price show its hand." }
+    ]
   },
   {
     week: 24,
     title: "Flushing the Late Longs",
-    description:
-      "Sharp wick down cleared out over-leveraged positions before a strong recovery. Funding reset to neutral, which I read as constructive for the weeks ahead.",
     chart: "/charts/chart-3.png",
-  },
-]
-eek: 26, date: "Jun 30", btcPrice: 73400, portfolioValue: 61500, change: 10.22 },
+    brief: "Sharp wick down cleared out over-leveraged positions.",
+    content: [
+      { type: "text", value: "Sharp wick down cleared out over-leveraged positions before a strong recovery. Funding reset to neutral, which I read as constructive for the weeks ahead." }
+    ]
+  }
 ]
