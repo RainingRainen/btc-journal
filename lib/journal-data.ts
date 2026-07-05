@@ -49,14 +49,42 @@ export const weeklyUpdates: WeeklyUpdate[] = [
     ]
   },
   {
-    week: 25,
-    title: "Chop Before the Break",
-    chart: "/charts/chart-2.png",
-    brief: "A tight consolidation week.",
+{
+    week: 2, // 如果你想顯示 Week 2，直接把這個數字改成 2 即可
+    title: "多頭要小心了，資金費率不太妙",
+    chart: "https://i.postimg.cc/25D7T18H/jie-tu-2026-07-05-xia-wu4-20-13.png",
+    brief: "近期現貨 ETF 在連續流出後迎來首度逆勢淨流入，看似為市場注入強心針。然而，這波樂觀情緒背後卻隱藏著巨大的結構性風險...",
     content: [
       { 
         type: "text", 
-        value: "A tight consolidation week. Volatility compressed into a coil — historically a precursor to an expansion move. Staying patient and letting price show its hand." 
+        value: "近期現貨 ETF 在連續流出後迎來首度逆勢淨流入，看似為市場注入強心針。然而，這波樂觀情緒背後卻隱藏著巨大的結構性風險。大時區的熊市結構依然對整體估值造成實質壓制，短線的反彈極有可能是多頭的最後掙扎。" 
+      },
+      { 
+        type: "image", 
+        value: "https://i.postimg.cc/59R5T72q/jie-tu-2026-07-05-xia-wu4-22-30.png" 
+      },
+      { 
+        type: "text", 
+        value: "從永續合約的資金費率在反彈中始終維持為正。這意味著多頭正在承擔高昂的槓桿成本。在缺乏法幣實質增量的背景下，這種「正費率」並非牛市蓄勢，而是散戶盲目抄底的訊號，導致期貨市場的槓桿結構變得極度脆弱。" 
+      },
+      { 
+        type: "image", 
+        value: "https://i.postimg.cc/cH5YqC0q/jie-tu-2026-07-05-xia-wu4-26-10.png" 
+      },
+      { 
+        type: "text", 
+        value: "量價結構進一步印證了空頭的壓制。成交量分佈圖中，價格在精準回測價值區下沿（VAL）後隨即放量下跌。VAL 已由先前的支撐徹底轉化為強阻力，顯示多頭試圖收復失地的力量遭遇拒絕。" 
+      },
+      { 
+        type: "image", 
+        value: "https://i.postimg.cc/4xzzKXbS/jie-tu-2026-07-05-xia-wu4-24-50.png" 
+      },
+      { 
+        type: "text", 
+        value: "從清算熱力圖來看，目前最大的清算強度和籌碼密集區，正集中在底部的多單。對於主力而言，這些密集的止損單是絕佳的燃料。主觀推演下，市場極大概率會先發動一次向下插針，精準定點清算這批高槓桿多頭，徹底洗淨市場浮籌並釋放正費率風險後，才有可能迎來健康的觸底反彈。" 
+      }
+    ]
+  }
       }
     ]
   },
