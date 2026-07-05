@@ -49,8 +49,7 @@ export const weeklyUpdates: WeeklyUpdate[] = [
     ]
   },
   {
-{
-    week: 2, // 如果你想顯示 Week 2，直接把這個數字改成 2 即可
+    week: 2,
     title: "多頭要小心了，資金費率不太妙",
     chart: "https://i.postimg.cc/25D7T18H/jie-tu-2026-07-05-xia-wu4-20-13.png",
     brief: "近期現貨 ETF 在連續流出後迎來首度逆勢淨流入，看似為市場注入強心針。然而，這波樂觀情緒背後卻隱藏著巨大的結構性風險...",
@@ -82,9 +81,6 @@ export const weeklyUpdates: WeeklyUpdate[] = [
       { 
         type: "text", 
         value: "從清算熱力圖來看，目前最大的清算強度和籌碼密集區，正集中在底部的多單。對於主力而言，這些密集的止損單是絕佳的燃料。主觀推演下，市場極大概率會先發動一次向下插針，精準定點清算這批高槓桿多頭，徹底洗淨市場浮籌並釋放正費率風險後，才有可能迎來健康的觸底反彈。" 
-      }
-    ]
-  }
       }
     ]
   },
