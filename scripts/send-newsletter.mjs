@@ -34,9 +34,10 @@ async function sendEmails() {
   console.log(`準備寄信給 ${emails.length} 位訂閱者...`);
 
   try {
-    const { data, error: sendError } = await resend.emails.send({
-      from: 'BTC Journal <onboarding@resend.dev>', 
-      bcc: emails,
+    // 將每個訂閱者打包成一封獨立的信件 (加入必要的 to 欄位)
+    const emailPayloads = emails.map(email => ({
+      from: 'BTC Journal <onboarding@resend.dev>',
+      to: email,
       subject: '📈 BTC Journal 最新週記已更新！',
       html: `
         <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
@@ -47,7 +48,10 @@ async function sendEmails() {
           <p style="font-size: 12px; color: #888;">感謝你訂閱 BTC Journal。</p>
         </div>
       `,
-    });
+    }));
+
+    // 使用 batch.send 批次發送所有信件
+    const { data, error: sendError } = await resend.batch.send(emailPayloads);
 
     if (sendError) {
       console.error('Resend 寄信失敗:', sendError);
