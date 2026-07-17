@@ -95,7 +95,7 @@ export const weeklyUpdates: WeeklyUpdate[] = [
         value: "Sharp wick down cleared out over-leveraged positions before a strong recovery. Funding reset to neutral, which I read as constructive for the weeks ahead." 
       }
     ]
-  }
+  },
   {
     week: 2,
     title: "多頭要小心了，資金費率不太妙",
