@@ -1,0 +1,30 @@
+name: Notify Subscribers on New Journal
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lib/journal-data.ts'
+
+jobs:
+  send-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install specific packages
+        run: npm install @supabase/supabase-js resend
+
+      - name: Run send newsletter script
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node scripts/send-newsletter.mjs
