@@ -97,7 +97,8 @@ export const weeklyUpdates: WeeklyUpdate[] = [
     ]
   }
 ]
-  {week: 2,
+  {
+    week: 2,
     title: "多頭要小心了，資金費率不太妙",
     chart: "https://i.postimg.cc/25D7T18H/jie-tu-2026-07-05-xia-wu4-20-13.png",
     brief: "近期現貨 ETF 在連續流出後迎來首度逆勢淨流入，看似為市場注入強心針。然而，這波樂觀情緒背後卻隱藏著巨大的結構性風險...",
