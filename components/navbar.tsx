@@ -2,13 +2,16 @@
 
 import { Button } from "@/components/ui/button"
 
-type View = "home" | "Indicators"
+// 1. 更新型別定義，加入 tools 與 guide
+type View = "home" | "Indicators" | "tools" | "guide"
 
 const links: { label: string; view: View }[] = [
   { label: "Home", view: "home" },
   { label: "Archive", view: "home" },
   { label: "Insights", view: "home" },
-  { label: "Portfolio", view: "portfolio" },
+  // 2. 修改原本的 Portfolio 並新增 Tools
+  { label: "Trading Indicators Guide", view: "guide" },
+  { label: "Tools", view: "tools" },
 ]
 
 export function Navbar({
@@ -35,9 +38,10 @@ export function Navbar({
 
         <div className="hidden items-center gap-1 md:flex">
           {links.map((link, i) => {
-            const isActive =
-              link.view === activeView &&
-              (link.view === "portfolio" || link.label === "Home")
+            // 3. 修改高亮邏輯：如果目前所在的 view 等於連結的 view，就顯示高亮
+            // 特別處理 Home 標籤，使其在 home 視圖下保持高亮
+            const isActive = link.view === activeView
+            
             return (
               <button
                 key={`${link.label}-${i}`}
