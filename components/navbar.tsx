@@ -1,15 +1,14 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { SubscribeModal } from "./subscribe-modal" // 匯入訂閱組件
 
-// 1. 更新型別定義，加入 tools 與 guide
 type View = "home" | "Indicators" | "tools" | "guide"
 
 const links: { label: string; view: View }[] = [
   { label: "Home", view: "home" },
   { label: "Archive", view: "home" },
   { label: "Insights", view: "home" },
-  // 2. 修改原本的 Portfolio 並新增 Tools
   { label: "Trading Indicators Guide", view: "guide" },
   { label: "Tools", view: "tools" },
 ]
@@ -38,8 +37,6 @@ export function Navbar({
 
         <div className="hidden items-center gap-1 md:flex">
           {links.map((link, i) => {
-            // 3. 修改高亮邏輯：如果目前所在的 view 等於連結的 view，就顯示高亮
-            // 特別處理 Home 標籤，使其在 home 視圖下保持高亮
             const isActive = link.view === activeView
             
             return (
@@ -56,9 +53,12 @@ export function Navbar({
           })}
         </div>
 
-        <Button className="font-medium shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:brightness-110">
-          Subscribe
-        </Button>
+        {/* 使用 SubscribeModal 包住按鈕 */}
+        <SubscribeModal>
+          <Button className="font-medium shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:brightness-110">
+            Subscribe
+          </Button>
+        </SubscribeModal>
       </nav>
     </header>
   )
