@@ -97,6 +97,7 @@ export const weeklyUpdates: WeeklyUpdate[] = [
     ]
   }
 ]
+}
   {
     week: 2,
     title: "多頭要小心了，資金費率不太妙",
