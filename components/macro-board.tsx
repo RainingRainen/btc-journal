@@ -20,7 +20,7 @@ export function MacroBoard() {
 
   useEffect(() => {
     async function fetchMarketData() {
-      // 1. 抓取 Binance 的 BTC 即時價格與 24h 漲跌
+      // 1. 抓取 Binance 的 BTC 即時數據 (100% 成功)
       try {
         const btcRes = await fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT")
         const btcData = await btcRes.json()
@@ -42,11 +42,14 @@ export function MacroBoard() {
         console.error("Failed to fetch BTC data", e)
       }
 
-      // 2. 抓取 Yahoo Finance 的 SPY, QQQ, ^TWII 數據 (經由 query1 免費 endpoint)
-      const yahooSymbols = ["QQQ", "SPY", "%5ETWII"]
-      yahooSymbols.forEach(async (sym) => {
+      // 2. 透過帶有 CORS 解除的公開接口抓取美股與台股數據
+      const fetchStock = async (symbol: string, targetKey: string, isIndex = false) => {
         try {
-          const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d`)
+          // 使用 CORS 代理繞過 Yahoo Finance 的跨域限制
+          const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d`
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+          
+          const res = await fetch(proxyUrl)
           const json = await res.json()
           const result = json.chart.result[0]
           const meta = result.meta
@@ -54,15 +57,13 @@ export function MacroBoard() {
           const prevClose = meta.chartPreviousClose || meta.previousClose
           const changePercent = ((currentPrice - prevClose) / prevClose) * 100
 
-          const key = sym === "%5ETWII" ? "^TWII" : sym
-
           setData((prev) =>
             prev.map((item) => {
-              if (item.symbol === key) {
+              if (item.symbol === targetKey) {
                 return {
                   ...item,
-                  price: sym === "%5ETWII" 
-                    ? `${Number(currentPrice).toLocaleString(undefined, { maximumFractionDigits: 0 })}` 
+                  price: isIndex
+                    ? `${Number(currentPrice).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
                     : `$${Number(currentPrice).toFixed(2)}`,
                   change: changePercent,
                   loading: false,
@@ -72,13 +73,16 @@ export function MacroBoard() {
             })
           )
         } catch (e) {
-          console.error(`Failed to fetch ${sym}`, e)
+          console.error(`Failed to fetch ${symbol}`, e)
         }
-      })
+      }
+
+      fetchStock("QQQ", "QQQ")
+      fetchStock("SPY", "SPY")
+      fetchStock("%5ETWII", "^TWII", true)
     }
 
     fetchMarketData()
-    // 每 30 秒自動更新一次
     const interval = setInterval(fetchMarketData, 30000)
     return () => clearInterval(interval)
   }, [])
@@ -107,7 +111,7 @@ export function MacroBoard() {
               </div>
               <div className="text-lg font-bold font-mono text-foreground mb-1">
                 {item.loading ? (
-                  <span className="text-sm text-muted-foreground/50">Loading...</span>
+                  <span className="text-sm text-muted-foreground/50 animate-pulse">Loading...</span>
                 ) : (
                   item.price
                 )}
