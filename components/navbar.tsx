@@ -54,7 +54,7 @@ export function Navbar({
 
         {/* 直接串接 Beehiiv 訂閱頁面 */}
         <a
-          href="https://btc-journal.beehiiv.com/subscribe"
+          href="https://btc-journal.beehiiv.com"
           target="_blank"
           rel="noopener noreferrer"
         >
