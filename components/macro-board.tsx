@@ -20,8 +20,8 @@ export function MacroBoard() {
 
   useEffect(() => {
     async function fetchMarketData() {
-      // 1. 抓取 Binance 的 BTC & ETH 即時數據 (100% 開放 CORS，毫秒級回應且絕不報錯)
-      const fetchBinanceToken = async (symbol: string, name: string) => {
+      // 1. 抓取加密貨幣 (BTC & ETH) - 24/7 即時流動
+      const fetchCrypto = async (symbol: string) => {
         try {
           const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`)
           if (!res.ok) return
@@ -47,54 +47,69 @@ export function MacroBoard() {
         }
       }
 
-      // 2. 抓取美股指數 (QQQ, SPY) - 使用穩定開放 CORS 的 Stooq / Free Financial API 防禦抓取
-      const fetchStockIndex = async (symbol: string) => {
+      // 2. 抓取美股 ETF (QQQ & SPY) - 使用開放 CORS 且休市依然保留最後收盤價的 API
+      const fetchStockClosePrice = async (symbol: string) => {
         try {
-          const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d`, {
-            headers: { 'Accept': 'application/json' }
-          })
-          if (!res.ok) throw new Error("Network response error")
-          const json = await res.json()
+          // 使用 Financial Modeling Prep 的免費開放端點
+          const res = await fetch(`https://financialmodelingprep.com/api/v3/quote-short/${symbol}?apikey=demo`)
           
-          const result = json?.chart?.result?.[0]
-          if (result && result.meta) {
-            const meta = result.meta
-            const currentPrice = meta.regularMarketPrice
-            const prevClose = meta.chartPreviousClose || meta.previousClose
-            const changePercent = prevClose ? ((currentPrice - prevClose) / prevClose) * 100 : 0
-
-            setData((prev) =>
-              prev.map((item) => {
-                if (item.symbol === symbol) {
-                  return {
-                    ...item,
-                    price: `$${Number(currentPrice).toFixed(2)}`,
-                    change: changePercent,
-                    loading: false,
+          if (res.ok) {
+            const dataArr = await res.json()
+            if (dataArr && dataArr[0]) {
+              const currentPrice = dataArr[0].price
+              // 免費 Demo Endpoint 預設呈現最新價格 / 收盤價
+              setData((prev) =>
+                prev.map((item) => {
+                  if (item.symbol === symbol) {
+                    return {
+                      ...item,
+                      price: `$${Number(currentPrice).toFixed(2)}`,
+                      // 保持原預設或動態更新
+                      loading: false,
+                    }
                   }
-                }
-                return item
-              })
-            )
+                  return item
+                })
+              )
+              return
+            }
           }
-        } catch (e) {
-          // 如果受限，賦予安全降級預設顯示，防止整個 App 崩潰
-          console.error(`Failed to fetch stock ${symbol}`, e)
-          setData((prev) =>
-            prev.map((item) => {
-              if (item.symbol === symbol) {
-                return { ...item, loading: false, price: "Market Closed" }
-              }
-              return item
-            })
-          )
+          throw new Error("FMP Demo rate limited")
+        } catch {
+          // 備用第二來源：Stooq / Yahoo Open Endpoint 抓最後收盤價
+          try {
+            const res = await fetch(`https://query2.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=price`)
+            const json = await res.json()
+            const priceObj = json?.quoteSummary?.result?.[0]?.price
+            
+            const closePrice = priceObj?.regularMarketPrice?.raw || priceObj?.postMarketPrice?.raw
+            const changePct = priceObj?.regularMarketChangePercent?.raw ? priceObj.regularMarketChangePercent.raw * 100 : 0
+
+            if (closePrice) {
+              setData((prev) =>
+                prev.map((item) => {
+                  if (item.symbol === symbol) {
+                    return {
+                      ...item,
+                      price: `$${Number(closePrice).toFixed(2)}`,
+                      change: changePct,
+                      loading: false,
+                    }
+                  }
+                  return item
+                })
+              )
+            }
+          } catch (e) {
+            console.error(`Fallback error for ${symbol}`, e)
+          }
         }
       }
 
-      await fetchBinanceToken("BTCUSDT", "Bitcoin")
-      await fetchBinanceToken("ETHUSDT", "Ethereum")
-      fetchStockIndex("QQQ")
-      fetchStockIndex("SPY")
+      await fetchCrypto("BTCUSDT")
+      await fetchCrypto("ETHUSDT")
+      fetchStockClosePrice("QQQ")
+      fetchStockClosePrice("SPY")
     }
 
     fetchMarketData()
@@ -131,7 +146,7 @@ export function MacroBoard() {
                   item.price
                 )}
               </div>
-              {!item.loading && item.price !== "Market Closed" && (
+              {!item.loading && (
                 <div
                   className={`text-xs font-semibold font-mono flex items-center gap-1 ${
                     isPositive ? "text-emerald-400" : "text-rose-400"
