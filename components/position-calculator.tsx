@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MacroBoard } from "@/components/macro-board"
 
 export function PositionCalculator() {
   const [values, setValues] = useState({
@@ -24,26 +25,34 @@ export function PositionCalculator() {
     rr: number;
   } | null>(null)
 
-  const calculate = () => {
-    const balance = parseFloat(values.balance)
-    const risk = parseFloat(values.risk) / 100
-    const entry = parseFloat(values.entry)
-    const sl = parseFloat(values.sl)
-    const tp = parseFloat(values.tp)
+  const handleCalculate = () => {
+    const bal = parseFloat(values.balance)
+    const rPct = parseFloat(values.risk)
+    const entryPrice = parseFloat(values.entry)
+    const slPrice = parseFloat(values.sl)
+    const tpPrice = parseFloat(values.tp)
 
-    if (!balance || !entry || !sl || !tp) return
+    if (!bal || !rPct || !entryPrice || !slPrice) return
 
-    const isLong = entry > sl
-    const slDist = Math.abs(entry - sl) / entry
-    const tpDist = Math.abs(tp - entry) / entry
-    const maxLoss = balance * (risk || 0.01)
-    const qty = maxLoss / Math.abs(entry - sl)
-    const rr = tpDist / slDist
+    const isLong = entryPrice > slPrice
+    const slDist = Math.abs(entryPrice - slPrice)
+    const tpDist = tpPrice ? Math.abs(tpPrice - entryPrice) : 0
+    
+    const maxLoss = bal * (rPct / 100)
+    const qty = maxLoss / slDist
+    const rr = tpDist ? tpDist / slDist : 0
 
-    setResults({ isLong, slDist, tpDist, maxLoss, qty, rr })
+    setResults({
+      isLong,
+      slDist,
+      tpDist,
+      maxLoss,
+      qty,
+      rr
+    })
   }
 
-return (
+  return (
     <div className="w-full max-w-4xl mx-auto py-6 space-y-6">
       <MacroBoard />
 
@@ -52,108 +61,98 @@ return (
           <h2 className="mb-9 text-[1.4rem] text-center tracking-[4px] uppercase text-[#ff9500] [text-shadow:0_0_15px_rgba(255,149,0,0.4)] font-semibold">
             Position Calc
           </h2>
-        
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold">Balance (USDT)</Label>
-            <Input 
-              type="number" 
-              placeholder="20000" 
-              className="bg-black border-[#1a1a1a] focus:border-[#ff9500] focus:ring-0 text-white h-12"
-              value={values.balance} 
-              onChange={(e) => setValues({...values, balance: e.target.value})} 
-            />
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold">Risk (%)</Label>
-            <Input 
-              type="number" 
-              placeholder="1" 
-              className="bg-black border-[#1a1a1a] focus:border-[#ff9500] focus:ring-0 text-white h-12"
-              value={values.risk} 
-              onChange={(e) => setValues({...values, risk: e.target.value})} 
-            />
-          </div>
-
-          {/* 關鍵的三列佈局 */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold text-left">Entry</Label>
-              <Input 
-                type="number" 
-                placeholder="68000" 
-                className="bg-black border-[#1a1a1a] focus:border-[#ff9500] text-white"
-                value={values.entry} 
-                onChange={(e) => setValues({...values, entry: e.target.value})} 
+              <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold">Balance (USDT)</Label>
+              <Input
+                type="number"
+                placeholder="20000"
+                className="bg-black border-[#1a1a1a] focus:border-[#ff9500] focus:ring-0 text-white h-12"
+                value={values.balance}
+                onChange={(e) => setValues({ ...values, balance: e.target.value })}
               />
             </div>
+
             <div className="flex flex-col gap-2">
-              <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold text-left">Stop Loss</Label>
-              <Input 
-                type="number" 
-                placeholder="67000" 
-                className="bg-black border-[#1a1a1a] focus:border-[#ff9500] text-white"
-                value={values.sl} 
-                onChange={(e) => setValues({...values, sl: e.target.value})} 
+              <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold">Risk (%)</Label>
+              <Input
+                type="number"
+                placeholder="1"
+                className="bg-black border-[#1a1a1a] focus:border-[#ff9500] focus:ring-0 text-white h-12"
+                value={values.risk}
+                onChange={(e) => setValues({ ...values, risk: e.target.value })}
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold text-left">Target</Label>
-              <Input 
-                type="number" 
-                placeholder="72000" 
-                className="bg-black border-[#1a1a1a] focus:border-[#ff9500] text-white"
-                value={values.tp} 
-                onChange={(e) => setValues({...values, tp: e.target.value})} 
-              />
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col gap-2">
+                <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold">Entry</Label>
+                <Input
+                  type="number"
+                  placeholder="68000"
+                  className="bg-black border-[#1a1a1a] focus:border-[#ff9500] focus:ring-0 text-white h-12"
+                  value={values.entry}
+                  onChange={(e) => setValues({ ...values, entry: e.target.value })}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold">Stop Loss</Label>
+                <Input
+                  type="number"
+                  placeholder="67000"
+                  className="bg-black border-[#1a1a1a] focus:border-[#ff9500] focus:ring-0 text-white h-12"
+                  value={values.sl}
+                  onChange={(e) => setValues({ ...values, sl: e.target.value })}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-[10px] text-[#666] uppercase tracking-[1.5px] font-semibold">Target</Label>
+                <Input
+                  type="number"
+                  placeholder="72000"
+                  className="bg-black border-[#1a1a1a] focus:border-[#ff9500] focus:ring-0 text-white h-12"
+                  value={values.tp}
+                  onChange={(e) => setValues({ ...values, tp: e.target.value })}
+                />
+              </div>
             </div>
-          </div>
 
-          <button 
-            onClick={calculate} 
-            className="mt-2 bg-[#ff9500] hover:brightness-110 active:scale-95 transition-all duration-200 rounded-[12px] p-4 text-black font-extrabold uppercase tracking-[2px] shadow-[0_5px_20px_rgba(255,149,0,0.2)]"
-          >
-            Execute Calculation
-          </button>
-        </div>
-
-        {/* 結果顯示區 */}
-        {results && (
-          <div className="mt-10 pt-8 border-t border-[#1a1a1a] animate-in fade-in duration-500">
-            <div 
-              className={`text-center text-[11px] font-black tracking-[3px] p-2 mb-8 rounded ${
-                results.isLong ? 'text-[#22c55e] bg-[#22c55e]/10' : 'text-[#ef4444] bg-[#ef4444]/10'
-              }`}
+            <Button
+              onClick={handleCalculate}
+              className="mt-4 bg-[#ff9500] hover:bg-[#e08300] text-black font-bold h-12 rounded-xl uppercase tracking-[2px] transition-all duration-300 shadow-[0_0_20px_rgba(255,149,0,0.3)] hover:shadow-[0_0_30px_rgba(255,149,0,0.5)]"
             >
-              {results.isLong ? "▲ LONG POSITION" : "▼ SHORT POSITION"}
-            </div>
-            
-            <p className="text-[10px] text-[#666] uppercase tracking-[1px] mb-1 text-left">Suggested Quantity</p>
-            <div className="text-[2.8rem] font-bold text-[#ff9500] [text-shadow:0_0_20px_rgba(255,149,0,0.4)] font-mono leading-none mb-8 text-left">
-              {results.qty.toLocaleString(undefined, {maximumFractionDigits: 4})}
-            </div>
+              Execute Calculation
+            </Button>
 
-            <div className="grid grid-cols-2 gap-x-5 gap-y-6 text-left">
-              <div className="flex flex-col">
-                <span className="text-[9px] text-[#666] uppercase mb-1">R/R Ratio</span>
-                <span className="text-[1.1rem] font-semibold text-white">{results.rr.toFixed(2)} : 1</span>
+            {results && (
+              <div className="mt-6 p-4 rounded-xl bg-black/50 border border-[#222] space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#888]">Direction</span>
+                  <span className={`font-bold font-mono ${results.isLong ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {results.isLong ? 'LONG ▲' : 'SHORT ▼'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#888]">Max Risk</span>
+                  <span className="font-bold font-mono text-white">${results.maxLoss.toFixed(2)} USDT</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#888]">Position Size</span>
+                  <span className="font-bold font-mono text-[#ff9500]">{results.qty.toFixed(4)} BTC</span>
+                </div>
+                {results.rr > 0 && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-[#888]">Risk / Reward</span>
+                    <span className="font-bold font-mono text-emerald-400">1 : {results.rr.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] text-[#666] uppercase mb-1">Max Loss</span>
-                <span className="text-[1.1rem] font-semibold text-[#ff4d4d]">{results.maxLoss.toFixed(2)} USDT</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] text-[#666] uppercase mb-1">SL Distance</span>
-                <span className="text-[1.1rem] font-semibold text-white">{(results.slDist * 100).toFixed(2)}%</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] text-[#666] uppercase mb-1">TP Distance</span>
-                <span className="text-[1.1rem] font-semibold text-white">{(results.tpDist * 100).toFixed(2)}%</span>
-              </div>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   )
