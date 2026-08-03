@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { SubscribeModal } from "./subscribe-modal" // 匯入訂閱組件
 
 type View = "home" | "Indicators" | "tools" | "guide"
 
@@ -53,12 +52,16 @@ export function Navbar({
           })}
         </div>
 
-        {/* 使用 SubscribeModal 包住按鈕 */}
-        <SubscribeModal>
+        {/* 直接串接 Beehiiv 訂閱頁面 */}
+        <a
+          href="https://btc-journal.beehiiv.com/subscribe"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Button className="font-medium shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:brightness-110">
             Subscribe
           </Button>
-        </SubscribeModal>
+        </a>
       </nav>
     </header>
   )
