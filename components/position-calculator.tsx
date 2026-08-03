@@ -43,18 +43,15 @@ export function PositionCalculator() {
     setResults({ isLong, slDist, tpDist, maxLoss, qty, rr })
   }
 
-  return (
+return (
     <div className="w-full max-w-4xl mx-auto py-6 space-y-6">
-      {/* 頂部即時大盤看板 */}
       <MacroBoard />
-      
-    <div className="flex justify-center items-center py-12 px-4 bg-transparent">
-      {/* 這裡還原了你原本的 card 樣式 */}
-      <div className="w-full max-w-[500px] bg-[#0a0a0a] border border-[#1a1a1a] rounded-[20px] p-10 shadow-[0_0_60px_rgba(0,0,0,1)] text-white">
-        
-        <h2 className="mb-9 text-[1.4rem] text-center tracking-[4px] uppercase text-[#ff9500] [text-shadow:0_0_15px_rgba(255,149,0,0.4)] font-semibold">
-          Position Calc
-        </h2>
+
+      <div className="flex justify-center items-center py-12 px-4 bg-transparent">
+        <div className="w-full max-w-[500px] bg-[#0a0a0a] border border-[#1a1a1a] rounded-[20px] p-10 shadow-[0_0_60px_rgba(0,0,0,1)] text-white">
+          <h2 className="mb-9 text-[1.4rem] text-center tracking-[4px] uppercase text-[#ff9500] [text-shadow:0_0_15px_rgba(255,149,0,0.4)] font-semibold">
+            Position Calc
+          </h2>
         
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
