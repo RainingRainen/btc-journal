@@ -44,6 +44,10 @@ export function PositionCalculator() {
   }
 
   return (
+    <div className="w-full max-w-4xl mx-auto py-6 space-y-6">
+      {/* 頂部即時大盤看板 */}
+      <MacroBoard />
+      
     <div className="flex justify-center items-center py-12 px-4 bg-transparent">
       {/* 這裡還原了你原本的 card 樣式 */}
       <div className="w-full max-w-[500px] bg-[#0a0a0a] border border-[#1a1a1a] rounded-[20px] p-10 shadow-[0_0_60px_rgba(0,0,0,1)] text-white">
