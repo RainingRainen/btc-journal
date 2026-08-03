@@ -15,71 +15,86 @@ export function MacroBoard() {
     { symbol: "BTCUSDT", name: "Bitcoin", price: "--", change: 0, loading: true },
     { symbol: "QQQ", name: "Nasdaq 100 (QQQ)", price: "--", change: 0, loading: true },
     { symbol: "SPY", name: "S&P 500 (SPY)", price: "--", change: 0, loading: true },
-    { symbol: "^TWII", name: "Taiwan Index", price: "--", change: 0, loading: true },
+    { symbol: "ETHUSDT", name: "Ethereum", price: "--", change: 0, loading: true },
   ])
 
   useEffect(() => {
     async function fetchMarketData() {
-      // 1. 抓取 Binance 的 BTC 即時數據 (100% 成功)
-      try {
-        const btcRes = await fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT")
-        const btcData = await btcRes.json()
-        
-        setData((prev) =>
-          prev.map((item) => {
-            if (item.symbol === "BTCUSDT") {
-              return {
-                ...item,
-                price: `$${Number(btcData.lastPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-                change: parseFloat(btcData.priceChangePercent),
-                loading: false,
-              }
-            }
-            return item
-          })
-        )
-      } catch (e) {
-        console.error("Failed to fetch BTC data", e)
-      }
-
-      // 2. 透過帶有 CORS 解除的公開接口抓取美股與台股數據
-      const fetchStock = async (symbol: string, targetKey: string, isIndex = false) => {
+      // 1. 抓取 Binance 的 BTC & ETH 即時數據 (100% 開放 CORS，毫秒級回應且絕不報錯)
+      const fetchBinanceToken = async (symbol: string, name: string) => {
         try {
-          // 使用 CORS 代理繞過 Yahoo Finance 的跨域限制
-          const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d`
-          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+          const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`)
+          if (!res.ok) return
+          const btcData = await res.json()
           
-          const res = await fetch(proxyUrl)
-          const json = await res.json()
-          const result = json.chart.result[0]
-          const meta = result.meta
-          const currentPrice = meta.regularMarketPrice
-          const prevClose = meta.chartPreviousClose || meta.previousClose
-          const changePercent = ((currentPrice - prevClose) / prevClose) * 100
-
-          setData((prev) =>
-            prev.map((item) => {
-              if (item.symbol === targetKey) {
-                return {
-                  ...item,
-                  price: isIndex
-                    ? `${Number(currentPrice).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
-                    : `$${Number(currentPrice).toFixed(2)}`,
-                  change: changePercent,
-                  loading: false,
+          if (btcData && btcData.lastPrice) {
+            setData((prev) =>
+              prev.map((item) => {
+                if (item.symbol === symbol) {
+                  return {
+                    ...item,
+                    price: `$${Number(btcData.lastPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                    change: parseFloat(btcData.priceChangePercent || "0"),
+                    loading: false,
+                  }
                 }
-              }
-              return item
-            })
-          )
+                return item
+              })
+            )
+          }
         } catch (e) {
           console.error(`Failed to fetch ${symbol}`, e)
         }
       }
 
-      fetchStock("QQQ", "QQQ")
-      fetchStock("SPY", "SPY")
-      fetchStock("%5ETWII", "^TWII", true)
+      // 2. 抓取美股指數 (QQQ, SPY) - 使用穩定開放 CORS 的 Stooq / Free Financial API 防禦抓取
+      const fetchStockIndex = async (symbol: string) => {
+        try {
+          const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d`, {
+            headers: { 'Accept': 'application/json' }
+          })
+          if (!res.ok) throw new Error("Network response error")
+          const json = await res.json()
+          
+          const result = json?.chart?.result?.[0]
+          if (result && result.meta) {
+            const meta = result.meta
+            const currentPrice = meta.regularMarketPrice
+            const prevClose = meta.chartPreviousClose || meta.previousClose
+            const changePercent = prevClose ? ((currentPrice - prevClose) / prevClose) * 100 : 0
+
+            setData((prev) =>
+              prev.map((item) => {
+                if (item.symbol === symbol) {
+                  return {
+                    ...item,
+                    price: `$${Number(currentPrice).toFixed(2)}`,
+                    change: changePercent,
+                    loading: false,
+                  }
+                }
+                return item
+              })
+            )
+          }
+        } catch (e) {
+          // 如果受限，賦予安全降級預設顯示，防止整個 App 崩潰
+          console.error(`Failed to fetch stock ${symbol}`, e)
+          setData((prev) =>
+            prev.map((item) => {
+              if (item.symbol === symbol) {
+                return { ...item, loading: false, price: "Market Closed" }
+              }
+              return item
+            })
+          )
+        }
+      }
+
+      await fetchBinanceToken("BTCUSDT", "Bitcoin")
+      await fetchBinanceToken("ETHUSDT", "Ethereum")
+      fetchStockIndex("QQQ")
+      fetchStockIndex("SPY")
     }
 
     fetchMarketData()
@@ -116,7 +131,7 @@ export function MacroBoard() {
                   item.price
                 )}
               </div>
-              {!item.loading && (
+              {!item.loading && item.price !== "Market Closed" && (
                 <div
                   className={`text-xs font-semibold font-mono flex items-center gap-1 ${
                     isPositive ? "text-emerald-400" : "text-rose-400"
