@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button"
 type View = "home" | "Indicators" | "tools" | "guide"
 
 const links: { label: string; view: View }[] = [
-  { label: "Home", view: "home" },
-  { label: "Archive", view: "home" },
-  { label: "Insights", view: "home" },
+  { label: "Weekly Log", view: "home" },
   { label: "Trading Indicators Guide", view: "guide" },
   { label: "Tools", view: "tools" },
 ]

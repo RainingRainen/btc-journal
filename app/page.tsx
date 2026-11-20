@@ -16,11 +16,10 @@ export default function Page() {
       <Navbar activeView={view} onNavigate={setView} />
       
       <div className="container mx-auto">
-        {/* 這裡最重要：確保判斷式跟 Navbar 傳過來的一模一樣 */}
+        {/* 確保導覽列切換與頁面元件一致 */}
         {view === "home" && <WeeklyUpdates />}
-        {view === "Indicators" && <Indicators />}
-        {view === "tools" && <PositionCalculator />} {/* 這裡有寫嗎？ */}
-        {view === "guide" && <div className="py-20 text-center">Guide Coming Soon</div>}
+        {(view === "guide" || view === "Indicators") && <Indicators />}
+        {view === "tools" && <PositionCalculator />}
       </div>
     </main>
   )

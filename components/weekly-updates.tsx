@@ -18,7 +18,7 @@ export function WeeklyUpdates() {
       </div>
 
       {/* 列表卡片 */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {weeklyUpdates.map((update) => (
           <article key={update.week} className="group flex flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 shadow-lg">
             <div className="relative aspect-[16/10] overflow-hidden border-b border-zinc-800">
